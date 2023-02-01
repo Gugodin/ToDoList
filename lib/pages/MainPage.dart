@@ -33,9 +33,11 @@ class _MainPageState extends State<MainPage> {
           child: FutureBuilder(
             future: ServicesRequest.getAllTask(),
             builder: (context, snapshot) {
+              // We call the request to get all the task from the token "javier"
               if (snapshot.hasData) {
                 return generateListView(snapshot.data);
               }
+              // If we dont have data a circle preogres indicator appears
               return const Center(
                   child: CircularProgressIndicator(
                 color: Colors.black,
@@ -49,6 +51,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   Widget generateListView(List<Task>? data) {
+    // Generating all the task that we get in the request
     return ListView.builder(
       itemCount: data?.length,
       padding: const EdgeInsets.only(top: 15, left: 15, right: 15),

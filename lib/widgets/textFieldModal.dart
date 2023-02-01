@@ -21,6 +21,7 @@ class TextFieldModal extends StatefulWidget {
 }
 
 class _TextFieldModalState extends State<TextFieldModal> {
+  // This validation is made just for the date textField
   var dateFormater = MaskTextInputFormatter(
       mask: '####-##-##', filter: {"#": RegExp(r'[0-9]')});
 
@@ -33,6 +34,7 @@ class _TextFieldModalState extends State<TextFieldModal> {
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: TextField(
+        // This controller works when we need to pass a certain value to the TextField
         controller: widget.insideValue != null ? TextEditingController(text:widget.insideValue) : null,
         style: const TextStyle(color: Colors.white),
         inputFormatters: widget.isDate == true ? [dateFormater] : null,

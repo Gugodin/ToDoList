@@ -103,7 +103,7 @@ class ButtonAddTaks extends StatelessWidget {
                           () {},
                         );
                       } else {
-                        // Send request with payload
+                        // Send request with the payload
                         await ServicesRequest.addNewTask(
                             tittle: modalWindowController.tittleTask.value,
                             dueDate: modalWindowController.dueDate.value,
@@ -112,9 +112,12 @@ class ButtonAddTaks extends StatelessWidget {
                                 modalWindowController.description.value,
                             tags: modalWindowController.tags.value);
 
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('Tarea creada')));
-                        Navigator.pushReplacementNamed(context, 'MainPage');
+                            const SnackBar(content: Text('Tarea creada')));
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, 'MainPage', (route) => false);
                       }
                     },
                     child: const Text('Crear tarea')),

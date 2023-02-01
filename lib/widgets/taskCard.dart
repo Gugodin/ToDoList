@@ -47,6 +47,7 @@ class _TaskCardState extends State<TaskCard> {
         ),
         borderRadius: BorderRadius.circular(10.0),
       ),
+      // Here we change colors when the taks is done or not
       color: widget.isCompleted == 0 ? ColorStyle.linear2 : ColorStyle.linear1,
       elevation: 10,
       shadowColor: ColorStyle.linear1,
@@ -86,6 +87,7 @@ class _TaskCardState extends State<TaskCard> {
           style: const TextStyle(color: Colors.white),
         ),
         subtitle: Text(
+          // The condition is just in the case that the date is going null
           widget.dueDate == null ? 'Fecha desconocida' : widget.dueDate!,
           style: const TextStyle(color: Colors.white),
         ),
@@ -95,6 +97,7 @@ class _TaskCardState extends State<TaskCard> {
               var res =
                   await ServicesRequest.deleteTask(id: widget.id.toString());
               if (res == true) {
+                // ignore: use_build_context_synchronously
                 ScaffoldMessenger.of(context).showSnackBar(
                     SnackBar(content: Text('Tarea ${widget.title} eliminada')));
                 Navigator.pushReplacementNamed(context, 'MainPage');
@@ -109,7 +112,8 @@ class _TaskCardState extends State<TaskCard> {
       ),
     );
   }
-
+  // This method just help changin values between the variables isCompleted and isChecked
+  // Because of the type of these two isCompleted -> int  isChecked -> bool 
   bool? chanceValue(int? isCompleted) {
     return isCompleted == 0 ? false : true;
   }
