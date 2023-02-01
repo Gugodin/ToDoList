@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:todolist/services/requests.dart';
 import 'package:todolist/style/Colors.dart';
+import 'package:todolist/widgets/textFieldModal.dart';
+
+import '../Models/Task.dart';
+import '../controller/modalWindowController.dart';
 
 class TaskCard extends StatefulWidget {
   TaskCard(
@@ -33,7 +38,7 @@ class _TaskCardState extends State<TaskCard> {
     setState(() {
       isChecked = chanceValue(widget.isCompleted);
     });
-
+    Size size = MediaQuery.of(context).size;
     return Card(
       shape: RoundedRectangleBorder(
         side: const BorderSide(
@@ -51,6 +56,11 @@ class _TaskCardState extends State<TaskCard> {
             setState(() {
               isChecked = value;
               if (isChecked == true) {
+                ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                    content: Text(
+                  '🎉🎉 Felicidades terminaste la tarea ${widget.title} 🎉🎉',
+                  textAlign: TextAlign.center,
+                )));
                 widget.isCompleted = 1;
               } else {
                 widget.isCompleted = 0;
@@ -94,11 +104,145 @@ class _TaskCardState extends State<TaskCard> {
               Icons.delete,
               color: Colors.white,
             )),
+            // We call the method of the Modal Window if the card is touched
+        onTap: (() => openModalWindow(context, size, widget.id.toString())),
       ),
     );
   }
 
   bool? chanceValue(int? isCompleted) {
     return isCompleted == 0 ? false : true;
+  }
+
+  openModalWindow(BuildContext context, size, String id) async {
+    Task taskDescriptor = await ServicesRequest.getTaskById(id: id);
+
+    ModalWindowController modalWindowController =
+        Get.put(ModalWindowController());
+
+    // Assign the values to the controller because these are the values that we are gonna send to the API
+    // The user will have the possiblities to chance these values by the Textfields
+    modalWindowController.tittleTask.value = taskDescriptor.title!;
+    modalWindowController.dueDate.value = taskDescriptor.dueDate!;
+    modalWindowController.description.value = taskDescriptor.description!;
+    modalWindowController.comments.value = taskDescriptor.comments!;
+    modalWindowController.tags.value = taskDescriptor.tags!;
+
+    await showDialog(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setState2) {
+          return AlertDialog(
+            backgroundColor: ColorStyle.linear1,
+            title: const Center(
+              child: Text(
+                'Desglose de la tarea',
+                style: TextStyle(
+                    color: Colors.white,
+                    fontWeight: FontWeight.w300,
+                    letterSpacing: 3),
+              ),
+            ),
+            content: SizedBox(
+              height: size.height * 0.43,
+              child: SingleChildScrollView(
+                child: Column(
+                  children: [
+                    TextFieldModal(
+                      title: 'Titulo de tarea',
+                      subtitle: 'Escribe el titulo de tu tarea',
+                      valueChange: modalWindowController.tittleTask,
+                      insideValue: taskDescriptor.title,
+                    ),
+                    TextFieldModal(
+                      title: 'Fecha de la tarea(Opcional)',
+                      subtitle: '2023-01-25',
+                      valueChange: modalWindowController.dueDate,
+                      isDate: true,
+                      insideValue: taskDescriptor.dueDate,
+                    ),
+                    TextFieldModal(
+                      title: 'Comentario de la tarea(Opcional)',
+                      subtitle: 'Escribe un comentario para la tarea',
+                      valueChange: modalWindowController.comments,
+                      insideValue: taskDescriptor.comments,
+                    ),
+                    TextFieldModal(
+                      title: 'Descripcion de la tarea(Opcional)',
+                      subtitle: 'Escribe la descripcion de tu tarea',
+                      valueChange: modalWindowController.description,
+                      insideValue: taskDescriptor.description,
+                    ),
+                    TextFieldModal(
+                      title: 'Tags de la tarea(Opcional)',
+                      subtitle: 'Escribe los tasgs de tu tarea',
+                      valueChange: modalWindowController.tags,
+                      insideValue: taskDescriptor.tags,
+                    ),
+                    Builder(
+                      builder: (context) {
+                        return modalWindowController.hasError.value == true
+                            ? Container(
+                                margin: EdgeInsets.only(top: 5),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: const [
+                                    Text(
+                                      'Escribe un titulo por favor',
+                                      style: TextStyle(color: Colors.white),
+                                    ),
+                                  ],
+                                ),
+                              )
+                            : Text('');
+                      },
+                    )
+                  ],
+                ),
+              ),
+            ),
+            actions: [
+              Center(
+                child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        side: const BorderSide(color: Colors.white, width: 1)),
+                    onPressed: () async {
+                      if (modalWindowController.tittleTask.value == '') {
+                        modalWindowController.hasError.value = true;
+                        setState2(
+                          () {},
+                        );
+                      } else {
+                        // Send request with payload
+                        await ServicesRequest.updateTask(
+                            id: widget.id.toString(),
+                            isCompleted: widget.isCompleted.toString(),
+                            tittle: modalWindowController.tittleTask.value,
+                            dueDate: modalWindowController.dueDate.value,
+                            comments: modalWindowController.comments.value,
+                            description:
+                                modalWindowController.description.value,
+                            tags: modalWindowController.tags.value);
+
+
+                        Navigator.pushReplacementNamed(context, 'MainPage');
+                      }
+                    },
+                    child: const Text('Actualizar tarea')),
+              )
+            ],
+          );
+        },
+      ),
+    );
+
+    // every time that we close de modal window we reset the values of the textfields
+    modalWindowController.tittleTask.value = '';
+    modalWindowController.dueDate.value = '';
+    modalWindowController.comments.value = '';
+    modalWindowController.description.value = '';
+    modalWindowController.tags.value = '';
+    modalWindowController.hasError.value = false;
   }
 }

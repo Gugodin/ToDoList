@@ -39,6 +39,35 @@ class ServicesRequest {
     return listOfRestults;
   }
 
+  static Future<Task> getTaskById({required String id}) async {
+    var headersList = {
+      'Authorization':
+          'Bearer e864a0c9eda63181d7d65bc73e61e3dc6b74ef9b82f7049f1fc7d9fc8f29706025bd271d1ee1822b15d654a84e1a0997b973a46f923cc9977b3fcbb064179ecd',
+      'Content-Type': 'application/json',
+    };
+    var url = Uri.parse(
+        'https://ecsdevapi.nextline.mx/vdev/tasks-challenge/tasks/$id');
+
+    var body = {"token": "javier"};
+
+    var req = http.Request('GET', url);
+    req.headers.addAll(headersList);
+    req.body = json.encode(body);
+
+    var res = await req.send();
+    final resBody = await res.stream.bytesToString();
+    var result = jsonDecode(resBody);
+
+    return Task(
+        id: result[0]['id'],
+        title: result[0]['title'],
+        isCompleted: result[0]['is_completed'],
+        dueDate: result[0]['due_date'],
+        comments: result[0]['comments'],
+        description: result[0]['description'],
+        tags: result[0]['tags']);
+  }
+
   static Future<bool> addNewTask(
       {required String tittle,
       String? dueDate,
@@ -124,8 +153,8 @@ class ServicesRequest {
       "tags": tags,
     };
 
-    var req = await http.put(url, body: body, headers: headersList);
 
+    var req = await http.put(url, body: body, headers: headersList);
     if (req.statusCode == 201) {
       return true;
     }

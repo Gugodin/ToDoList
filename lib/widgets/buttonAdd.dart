@@ -93,12 +93,11 @@ class ButtonAddTaks extends StatelessWidget {
             actions: [
               Center(
                 child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        side: const BorderSide(color: Colors.white, width: 1)),
                     onPressed: () async {
-                      print('Cambio de valor?');
-                      print(modalWindowController.tittleTask.value);
-
                       if (modalWindowController.tittleTask.value == '') {
-                        print('Entramos aqui');
                         modalWindowController.hasError.value = true;
                         setState2(
                           () {},
@@ -113,6 +112,8 @@ class ButtonAddTaks extends StatelessWidget {
                                 modalWindowController.description.value,
                             tags: modalWindowController.tags.value);
 
+                        ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('Tarea creada')));
                         Navigator.pushReplacementNamed(context, 'MainPage');
                       }
                     },

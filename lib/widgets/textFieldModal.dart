@@ -5,11 +5,17 @@ import 'package:todolist/style/Colors.dart';
 
 class TextFieldModal extends StatefulWidget {
   TextFieldModal(
-      {super.key, this.title, this.subtitle, this.valueChange, this.isDate});
+      {super.key,
+      this.title,
+      this.subtitle,
+      this.valueChange,
+      this.isDate,
+      this.insideValue});
   String? title;
   String? subtitle;
   RxString? valueChange;
   bool? isDate;
+  String? insideValue;
   @override
   State<TextFieldModal> createState() => _TextFieldModalState();
 }
@@ -20,14 +26,18 @@ class _TextFieldModalState extends State<TextFieldModal> {
 
   @override
   Widget build(BuildContext context) {
+    TextEditingController _controller = new TextEditingController();
+    
+
+    
     return Container(
       margin: const EdgeInsets.symmetric(vertical: 5),
       child: TextField(
+        controller: widget.insideValue != null ? TextEditingController(text:widget.insideValue) : null,
         style: const TextStyle(color: Colors.white),
         inputFormatters: widget.isDate == true ? [dateFormater] : null,
         decoration: getDecoration(),
         onChanged: (value) {
-          print(value);
           widget.valueChange?.value = value;
         },
       ),
