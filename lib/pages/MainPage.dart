@@ -58,6 +58,9 @@ class _MainPageState extends State<MainPage> {
           title: data?[index].title,
           dueDate: data?[index].dueDate,
           isCompleted: data?[index].isCompleted,
+          comments: data?[index].comments,
+          description: data?[index].description,
+          tags: data?[index].tags,
         );
       },
     );

@@ -107,21 +107,18 @@ class ServicesRequest {
       String? description,
       String? tags,
       String? isCompleted}) async {
-        
     var headersList = {
       'Authorization':
           'Bearer e864a0c9eda63181d7d65bc73e61e3dc6b74ef9b82f7049f1fc7d9fc8f29706025bd271d1ee1822b15d654a84e1a0997b973a46f923cc9977b3fcbb064179ecd',
     };
-    var url =
-        Uri.parse('https://ecsdevapi.nextline.mx/vdev/tasks-challenge/tasks/$id');
-
-    String? date;
+    var url = Uri.parse(
+        'https://ecsdevapi.nextline.mx/vdev/tasks-challenge/tasks/$id');
 
     var body = {
       "token": "javier",
       "title": tittle,
       "is_completed": isCompleted,
-      "due_date": date,
+      "due_date": dueDate,
       "comments": comments,
       "description": description,
       "tags": tags,

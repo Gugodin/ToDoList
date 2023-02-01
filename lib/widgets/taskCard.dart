@@ -3,7 +3,15 @@ import 'package:todolist/services/requests.dart';
 import 'package:todolist/style/Colors.dart';
 
 class TaskCard extends StatefulWidget {
-  TaskCard({super.key, this.id, this.title, this.dueDate, this.isCompleted,this.comments,this.description,this.tags});
+  TaskCard(
+      {super.key,
+      this.id,
+      this.title,
+      this.dueDate,
+      this.isCompleted,
+      this.comments,
+      this.description,
+      this.tags});
 
   int? id;
   String? title;
@@ -44,17 +52,19 @@ class _TaskCardState extends State<TaskCard> {
               isChecked = value;
               if (isChecked == true) {
                 widget.isCompleted = 1;
-                print('Completo tarea');
               } else {
                 widget.isCompleted = 0;
               }
             });
             //We have to update in the database
-            // ServicesRequest.updateTask(
-            //   id: widget.id.toString(),
-            //   tittle: widget.title,
-            //   comments: widget.
-            // );
+            ServicesRequest.updateTask(
+                id: widget.id.toString(),
+                tittle: widget.title,
+                comments: widget.comments ?? '',
+                description: widget.description ?? '',
+                dueDate: widget.dueDate,
+                tags: widget.tags ?? '',
+                isCompleted: widget.isCompleted.toString());
           },
           value: isChecked,
           shape: const CircleBorder(),
