@@ -230,7 +230,9 @@ class _TaskCardState extends State<TaskCard> {
                             tags: modalWindowController.tags.value);
 
 
-                        Navigator.pushReplacementNamed(context, 'MainPage');
+                        // ignore: use_build_context_synchronously
+                        Navigator.pushNamedAndRemoveUntil(
+                            context, 'MainPage', (route) => false);
                       }
                     },
                     child: const Text('Actualizar tarea')),
